@@ -11,5 +11,6 @@ namespace API.Data
         }
 
         public DbSet<Model_Produtos> Produtos { get; set; }
+        public DbSet<Model_Usuario> Usuarios { get; set; }
     }
 }

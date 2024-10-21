@@ -17,40 +17,71 @@ namespace API.Migrations
 #pragma warning disable 612, 618
             modelBuilder
                 .HasAnnotation("ProductVersion", "8.0.10")
-                .HasAnnotation("Relational:MaxIdentifierLength", 128);
+                .HasAnnotation("Relational:MaxIdentifierLength", 63);  // PostgreSQL limite de 63 caracteres para identificadores
 
-            SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
+            modelBuilder.HasPostgresExtension("uuid-ossp");  // Caso esteja usando UUIDs ou extensões específicas
 
             modelBuilder.Entity("API.Models.Model_Produtos", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+            {
+                b.Property<int>("Id")
+                    .ValueGeneratedOnAdd()
+                    .HasColumnType("serial"); // PostgreSQL usa SERIAL para auto incremento
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                b.Property<string>("Descricao")
+                    .IsRequired()
+                    .HasColumnType("text");  // Em PostgreSQL, nvarchar(max) é text
 
-                    b.Property<string>("Descricao")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                b.Property<string>("Imagem")
+                    .IsRequired()
+                    .HasColumnType("text");
 
-                    b.Property<string>("Imagem")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                b.Property<decimal>("Preco")
+                    .HasColumnType("decimal(18,2)");
 
-                    b.Property<decimal>("Preco")
-                        .HasColumnType("decimal(18,2)");
+                b.Property<string>("Produto")
+                    .IsRequired()
+                    .HasColumnType("text");
 
-                    b.Property<string>("Produto")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                b.Property<int>("Quantidade")
+                    .HasColumnType("integer");
 
-                    b.Property<int>("Quantidade")
-                        .HasColumnType("int");
+                b.HasKey("Id");
 
-                    b.HasKey("Id");
+                b.ToTable("Produtos");
+            });
 
-                    b.ToTable("Produtos");
-                });
+            // Adicionando a tabela Usuarios para PostgreSQL
+            modelBuilder.Entity("API.Models.Model_Usuarios", b =>
+            {
+                b.Property<int>("Id")
+                    .ValueGeneratedOnAdd()
+                    .HasColumnType("serial");  // SERIAL para auto incremento
+
+                b.Property<string>("Nome")
+                    .IsRequired()
+                    .HasColumnType("varchar(100)");
+
+                b.Property<string>("Email")
+                    .IsRequired()
+                    .HasColumnType("varchar(100)");
+
+                b.Property<string>("Senha")
+                    .IsRequired()
+                    .HasColumnType("varchar(255)");
+
+                b.Property<string>("Funcao")
+                    .IsRequired()
+                    .HasColumnType("varchar(50)");
+
+
+
+                b.HasKey("Id");
+
+                b.HasIndex("Email")
+                    .IsUnique();
+
+                b.ToTable("Usuarios");
+            });
 #pragma warning restore 612, 618
         }
     }
